@@ -1,0 +1,13 @@
+{:paths ["src"]
+ :deps {io.github.kotoba-lang/langgraph
+        {:git/sha "5b4e5e70837b849b14b6a5800894e3be202ad5fa"}
+        ;; anime craft lib (ADR-2607023000) — the governor sanity-checks the
+        ;; cut by walking the actual layer-specs from anime.production, and
+        ;; assemble commits carry the built cut-plan.
+        io.github.kotoba-lang/anime
+        {:git/sha "9de3495420600eecd47cb4368c129c0bacb4247b"}}
+ :aliases
+ {:test {:extra-paths ["test"]
+         :extra-deps {io.github.cognitect-labs/test-runner
+                      {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+         :main-opts ["-m" "cognitect.test-runner"]}}}
