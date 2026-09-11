@@ -140,7 +140,7 @@ built plan so what was approved is exactly what was assembled.
   layers, assemble whose cut is flagged `"retake"`, low confidence.
 
 ```bash
-clojure -M:test
+kbb -M:test
 ```
 
 See [`docs/business-model.md`](docs/business-model.md) and
