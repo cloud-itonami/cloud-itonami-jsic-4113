@@ -1,5 +1,5 @@
 (ns animation-production.governor-test
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [animation-production.governor :as governor]
             [animation-production.store :as store]))
 
