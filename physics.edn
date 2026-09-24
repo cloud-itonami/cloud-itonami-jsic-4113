@@ -1,0 +1,42 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:physics` runs it.
+;;
+;; README "Robotics premise": a motion-capture-stage / camera-dolly robot
+;; performs physical reference-capture moves (actor mocap staging,
+;; multi-angle background reference photography). Its physical work: a
+;; camera dolly running a track move with a camera package up high, a
+;; motion-control arm repositioning the camera head, and the aluminium truss
+;; chord that carries the mocap cameras over the stage.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+;; Replacing an estimate with a sourced value is this bot's growth work.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-jsic-4113"
+ :cases
+ [{:id :dolly-track-move
+   :kind :transport
+   :procedure "camera dolly runs a 6 m track move with a 25 kg camera package on a 1.6 m column and stops at the mark"
+   :params {:mass-kg 80.0 :payload-kg 25.0 :distance-m 6.0 :v-max-mps 1.0 :a-max-mps2 0.4
+            :drive-force-n 400.0 :crr 0.005 :cog-height-m 0.45 :payload-cog-height-m 1.6
+            :support-half-length-m 0.40 :max-time-s 120.0}
+   :sweep {:param :brake-decel-mps2 :values [0.5 1.0 2.0 3.0 4.0 5.0]}
+   :quantity :min-tipover-margin
+   :limit {:min 0.3 :basis "estimate: keep 30 % of the static restoring moment in reserve when the dolly grip stops hard on a mark"}
+   :boundary {:lo 0.5 :hi 8.0}}
+  {:id :camera-head-reposition
+   :kind :manipulator
+   :procedure "motion-control arm lifts the camera package from low angle to an overhead reference position"
+   :params {:l1-m 0.80 :l2-m 0.70 :m1-kg 15.0 :m2-kg 10.0
+            :from [1.00 0.30] :to [0.40 1.20] :duration-s 3.0 :steps 500}
+   :sweep {:param :payload-kg :values [2.0 5.0 8.0 12.0 16.0]}
+   :quantity :peak-tau1-nm
+   :limit {:max 300.0 :basis "estimate: continuous shoulder torque of a 20 kg-payload-class industrial arm used as a motion-control rig"}
+   :boundary {:lo 0.5 :hi 40.0}}
+  {:id :mocap-truss-chord-pull
+   :kind :material
+   :procedure "tension test of a 50 x 3 mm 6061-T6 aluminium truss chord that carries the mocap cameras over the stage"
+   :params {:length-m 0.10 :area-m2 4.43e-4 :youngs-modulus-pa 68.9e9 :yield-stress-pa 240.0e6
+            :hardening-pa 0.7e9 :density-kg-m3 2700.0 :max-force-n 150000.0}
+   :sweep {:param :area-m2 :values [2.0e-4 3.0e-4 4.43e-4 6.0e-4]}
+   :quantity :yield-force-n
+   :limit {:min 80000.0 :basis "estimate: chord yield load needed for the camera truss's working load times a rigging safety factor; the yield stress is taken as the 6061-T6 extrusion minimum, to be confirmed against ASTM B221"}}]}
